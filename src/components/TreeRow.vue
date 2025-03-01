@@ -1,6 +1,6 @@
 <template>
   <div class="border-radius">
-    <!-- Item principal -->
+    <!-- Main item  -->
     <div
       class="tree-row"
       :class="{ 'bg-oppened': expanded }"
@@ -14,9 +14,8 @@
       <span>{{ item.name }}</span>
     </div>
 
-    <!-- Opções e checkboxes (só aparecem se o item estiver expandido) -->
     <div v-if="expanded" :class="{ 'bg-oppened': expanded }">
-      <!-- Opções (lado a lado) -->
+      <!-- Options display flex -->
       <div v-if="item.options?.length" class="options-container">
         <span
           v-for="(option, index) in item.options"
@@ -29,7 +28,7 @@
         </span>
       </div>
 
-      <!-- Checkboxes (abaixo das opções, em coluna) -->
+      <!-- Checkboxes column -->
 
       <div v-if="activeOptionIndex !== null" class="form-check checkbox-container">
         <p>{{ item.options[activeOptionIndex].titleOptions }}</p>
@@ -39,13 +38,19 @@
           class="checkbox-item"
         >
           <label>
-            <input type="checkbox" v-model="check.checked" class="form-check-input" />
+            <input
+              type="checkbox"
+              :value="check.name"
+              v-model="isChecked"
+              class="form-check-input"
+              @change="updateSelectedCheckboxes"
+            />
             {{ check.name }}
           </label>
         </div>
       </div>
 
-      <!-- Filhos (abaixo de tudo, em coluna) -->
+      <!-- Childs column -->
       <div class="children-container">
         <TreeRow v-for="child in item.children" :key="child.id" :item="child" :level="level + 1" />
       </div>
@@ -56,17 +61,24 @@
 <script setup>
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useStore } from 'vuex'
 
+const isChecked = ref([])
+const store = useStore()
 const props = defineProps({
   item: Object,
   level: Number,
 })
 
+const updateSelectedCheckboxes = () => {
+  store.dispatch('setCheckBoxes', isChecked.value)
+}
+
 const expanded = ref(props.item.expanded)
 const activeOptionIndex = ref(null)
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .tree-row {
   display: flex;
   align-items: center;

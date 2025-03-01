@@ -29,6 +29,11 @@
             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
               <div class="accordion-body">
                 <div class="table-container">
+                  <div v-if="concludedRequest" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
                   <table class="tree-table">
                     <tbody>
                       <TreeRow
@@ -73,6 +78,11 @@
             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo">
               <div class="accordion-body">
                 <div class="table-container">
+                  <div v-if="concludedRequest" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
                   <table class="tree-table">
                     <tbody>
                       <TreeRow
@@ -88,6 +98,17 @@
             </div>
           </div>
         </div>
+        <div class="d-flex align-items-center justify-content-center flex-column mt-5">
+          <p>Acessar Dados Selecionados</p>
+          <button
+            type="button"
+            class="btn btn-bd-primary custom-button-default"
+            @click="goToVuex"
+            title="Selecione os checkboxes"
+          >
+            Veja o Vuex em Ação!
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -95,102 +116,35 @@
 <script setup>
 import { ref } from 'vue'
 import TreeRow from './TreeRow.vue'
+import api from '../api/api'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const items = ref([
-  {
-    id: 1,
-    name: 'Morfologia',
-    expanded: false,
-    children: [
-      {
-        id: 2,
-        name: 'Estrutura e Formação das Palavras',
-        expanded: false,
-        children: [],
-        options: [
-          {
-            id: 5,
-            name: 'Aulas',
-            expanded: false,
-            titleOptions: 'TEORIA +QUESTÕES ORIENTADAS',
-            checkList: [
-              { id: 101, name: 'Aula 1', checked: false },
-              { id: 102, name: 'Aula 2', checked: false },
-            ],
-          },
-          {
-            id: 6,
-            name: 'Exercícios',
-            expanded: false,
-            titleOptions: 'TITULO EXEMPLO',
-            checkList: [
-              { id: 201, name: 'Exercício 1', checked: false },
-              { id: 202, name: 'Exercício 2', checked: false },
-            ],
-          },
-          {
-            id: 7,
-            name: 'Materiais',
-            expanded: false,
-            titleOptions: 'TITULO EXEMPLO 1',
-            checkList: [
-              { id: 301, name: 'Material PDF', checked: false },
-              { id: 302, name: 'Slides', checked: false },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-])
+//FORJANDO REQUISIÇÃO AO ENTRAR NA TELA
+//AXIOS INSTANCIADO EM API.JS
+//ADOTEI ESSA ESTRATÉGIA PARA SIMULAR UMA REQUISIÇÃO AO MONTAR A TELA (onMounted) E OBTER TODOS OS DADOS EVITANDO REQUESTS A CADA CLIQUE, MAS PODERIA SIM, SER COM O CLIQUE DOS ITENS DA LISTAGEM PASSANDO PARAMETRO ID E RETORNANDO OS DADOS VIA API
+const items = ref()
+const itemsTwo = ref()
+const concludedRequest = ref(true)
+const router = useRouter()
 
-const itemsTwo = ref([
-  {
-    id: 1,
-    name: 'Morfologia',
-    expanded: false,
-    children: [
-      {
-        id: 2,
-        name: 'Estrutura e Formação das Palavras',
-        expanded: false,
-        children: [],
-        options: [
-          {
-            id: 5,
-            name: 'Aulas',
-            expanded: false,
-            titleOptions: 'TEORIA +QUESTÕES ORIENTADAS',
-            checkList: [
-              { id: 101, name: 'Aula 1', checked: false },
-              { id: 102, name: 'Aula 2', checked: false },
-            ],
-          },
-          {
-            id: 6,
-            name: 'Exercícios',
-            expanded: false,
-            titleOptions: 'TITULO EXEMPLO',
-            checkList: [
-              { id: 201, name: 'Exercício 1', checked: false },
-              { id: 202, name: 'Exercício 2', checked: false },
-            ],
-          },
-          {
-            id: 7,
-            name: 'Materiais',
-            expanded: false,
-            titleOptions: 'TITULO EXEMPLO 1',
-            checkList: [
-              { id: 301, name: 'Material PDF', checked: false },
-              { id: 302, name: 'Slides', checked: false },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-])
+const getItems = async () => {
+  await api.get('/items').then((response) => {
+    items.value = response.data.items
+    itemsTwo.value = response.data.items
+    concludedRequest.value = false
+  })
+}
+
+const goToVuex = () => {
+  router.push('/vuex')
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    getItems()
+  }, 2000)
+})
 </script>
 <style lang="scss">
 .card {
@@ -222,6 +176,7 @@ const itemsTwo = ref([
 }
 
 .tree-table {
+  user-select: none;
   width: 100%;
   border-collapse: collapse;
 }
@@ -238,6 +193,14 @@ const itemsTwo = ref([
 }
 
 .accordion {
-  --bs-accordion-active-bg: #ffffff !important; /* Substitua pela cor desejada */
+  --bs-accordion-active-bg: #ffffff !important;
+}
+
+.btn-bd-primary {
+  background-color: #e185fd !important;
+  color: #fff !important;
+  &:hover {
+    background-color: #c97ee0 !important;
+  }
 }
 </style>

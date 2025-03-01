@@ -31,6 +31,7 @@ import { RouterView } from 'vue-router'
 <style scoped lang="scss">
 * {
   list-style: none;
+  font-family: 'Poppins', sans-serif;
 }
 
 .header-bar {
