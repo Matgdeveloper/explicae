@@ -47,9 +47,9 @@ ul {
 .s-hero {
   background-image: url('./assets/background.svg');
   background-repeat: no-repeat;
-  background-size: cover; /* Ajusta a imagem para caber na tela sem esticar */
+  background-size: cover;
   background-position: center;
-  height: 100vh; /* Garante que a section ocupe toda a altura da tela */
+  height: 100vh;
   width: 100%;
   margin: 0;
   padding: 0;

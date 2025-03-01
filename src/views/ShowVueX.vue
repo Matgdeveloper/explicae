@@ -26,11 +26,10 @@ const selectedData = ref()
 const goBack = () => {
   const checkboxes = store.getters.getCheckBoxes
 
-  // Verifica se o array de checkboxes está vazio
   if (!checkboxes || checkboxes.length === 0) {
-    router.push('/') // Redireciona para a home se estiver vazio
+    router.push('/')
   } else {
-    selectedData.value = [...checkboxes] // Atualiza selectedData com os checkboxes selecionados
+    selectedData.value = [...checkboxes]
   }
 }
 
