@@ -1,74 +1,126 @@
 <template>
-  <tr>
-    <td
-      :style="{ paddingLeft: `${depth * 20}px` }"
-      @click="toggleExpand"
-      :class="{ 'change-bg-color': item.expanded }"
-      class="custom-height"
+  <div class="border-radius">
+    <!-- Item principal -->
+    <div
+      class="tree-row"
+      :class="{ 'bg-oppened': expanded }"
+      :style="{ paddingLeft: `${level * 15}px` }"
+      @click="expanded = !expanded"
+      role="button"
     >
-      <div class="d-flex align-items-center ps-2">
-        <span v-if="item.children.length" class="toggle">
-          <Icon
-            :icon="item.expanded ? 'meteor-icons:minus' : 'eva:plus-fill'"
-            width="24"
-            height="24"
-          />
+      <span class="expand-icon">
+        <Icon :icon="expanded ? 'meteor-icons:minus' : 'eva:plus-fill'" width="24" height="24" />
+      </span>
+      <span>{{ item.name }}</span>
+    </div>
+
+    <!-- Opções e checkboxes (só aparecem se o item estiver expandido) -->
+    <div v-if="expanded" :class="{ 'bg-oppened': expanded }">
+      <!-- Opções (lado a lado) -->
+      <div v-if="item.options?.length" class="options-container">
+        <span
+          v-for="(option, index) in item.options"
+          :key="option.id"
+          @click="activeOptionIndex = activeOptionIndex === index ? null : index"
+          class="option"
+          :class="{ active: activeOptionIndex === index }"
+        >
+          {{ option.name }}
         </span>
-        {{ item.name }}
       </div>
-    </td>
-  </tr>
-  <template v-if="item.expanded">
-    <TreeRow
-      v-for="child in item.children"
-      :key="child.id"
-      :item="child"
-      :depth="depth + 1"
-      @toggle="onToggle"
-    />
-  </template>
+
+      <!-- Checkboxes (abaixo das opções, em coluna) -->
+
+      <div v-if="activeOptionIndex !== null" class="form-check checkbox-container">
+        <p>{{ item.options[activeOptionIndex].titleOptions }}</p>
+        <div
+          v-for="check in item.options[activeOptionIndex].checkList"
+          :key="check.id"
+          class="checkbox-item"
+        >
+          <label>
+            <input type="checkbox" v-model="check.checked" class="form-check-input" />
+            {{ check.name }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Filhos (abaixo de tudo, em coluna) -->
+      <div class="children-container">
+        <TreeRow v-for="child in item.children" :key="child.id" :item="child" :level="level + 1" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
 const props = defineProps({
   item: Object,
-  depth: {
-    type: Number,
-    default: 0,
-  },
+  level: Number,
 })
 
-const emit = defineEmits(['toggle'])
-
-const toggleExpand = () => {
-  emit('toggle', props.item)
-}
-
-const onToggle = (childItem) => {
-  emit('toggle', childItem)
-}
+const expanded = ref(props.item.expanded)
+const activeOptionIndex = ref(null)
 </script>
 
 <style scoped>
-.toggle {
+.tree-row {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  transition: all 0.3s;
+  &:hover {
+    background-color: #e8a3fd;
+  }
+}
+
+.expand-icon {
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.options-container {
+  display: flex; /* Opções lado a lado */
+  margin-left: 35px;
+  margin-top: 5px;
+}
+
+.option {
   cursor: pointer;
   font-weight: bold;
-  margin-right: 5px;
-  display: inline-flex;
-  align-items: center;
+  transition: background 0.3s;
+  padding: 5px 10px;
 }
 
-.change-bg-color {
-  background-color: rgba(221, 166, 228, 0.87);
+.option:hover,
+.option.active {
+  background-color: #e8a3fd;
 }
 
-.custom-height {
-  user-select: none;
-  height: 60px;
-  transition: all 0.3s;
-  cursor: pointer;
+.option.active {
+  border-bottom: 2px solid #ab56c5;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column; /* Checkboxes em coluna */
+  padding-left: 70px;
+  padding-top: 10px;
+  background-color: rgb(248, 248, 248);
+}
+
+.checkbox-item {
+  margin-bottom: 5px;
+}
+
+.bg-oppened {
+  background-color: #efbaff;
+}
+
+.border-radius {
+  border-radius: 10px;
 }
 </style>

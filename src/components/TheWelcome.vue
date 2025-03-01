@@ -32,11 +32,10 @@
                   <table class="tree-table">
                     <tbody>
                       <TreeRow
-                        v-for="item in itemsTwo"
-                        :key="item.id"
+                        v-for="(item, index) in items"
+                        :key="index"
                         :item="item"
-                        :depth="0"
-                        @toggle="toggleItem"
+                        :level="0"
                       />
                     </tbody>
                   </table>
@@ -46,7 +45,7 @@
           </div>
         </div>
 
-        <!--  -->
+        <!-- new accordion -->
 
         <div class="accordion mt-5" id="accordionExample">
           <div class="accordion-item">
@@ -77,11 +76,10 @@
                   <table class="tree-table">
                     <tbody>
                       <TreeRow
-                        v-for="item in items"
-                        :key="item.id"
+                        v-for="(item, index) in itemsTwo"
+                        :key="index"
                         :item="item"
-                        :depth="0"
-                        @toggle="toggleItem"
+                        :level="0"
                       />
                     </tbody>
                   </table>
@@ -97,6 +95,7 @@
 <script setup>
 import { ref } from 'vue'
 import TreeRow from './TreeRow.vue'
+
 const items = ref([
   {
     id: 1,
@@ -108,6 +107,38 @@ const items = ref([
         name: 'Estrutura e Formação das Palavras',
         expanded: false,
         children: [],
+        options: [
+          {
+            id: 5,
+            name: 'Aulas',
+            expanded: false,
+            titleOptions: 'TEORIA +QUESTÕES ORIENTADAS',
+            checkList: [
+              { id: 101, name: 'Aula 1', checked: false },
+              { id: 102, name: 'Aula 2', checked: false },
+            ],
+          },
+          {
+            id: 6,
+            name: 'Exercícios',
+            expanded: false,
+            titleOptions: 'TITULO EXEMPLO',
+            checkList: [
+              { id: 201, name: 'Exercício 1', checked: false },
+              { id: 202, name: 'Exercício 2', checked: false },
+            ],
+          },
+          {
+            id: 7,
+            name: 'Materiais',
+            expanded: false,
+            titleOptions: 'TITULO EXEMPLO 1',
+            checkList: [
+              { id: 301, name: 'Material PDF', checked: false },
+              { id: 302, name: 'Slides', checked: false },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -124,14 +155,42 @@ const itemsTwo = ref([
         name: 'Estrutura e Formação das Palavras',
         expanded: false,
         children: [],
+        options: [
+          {
+            id: 5,
+            name: 'Aulas',
+            expanded: false,
+            titleOptions: 'TEORIA +QUESTÕES ORIENTADAS',
+            checkList: [
+              { id: 101, name: 'Aula 1', checked: false },
+              { id: 102, name: 'Aula 2', checked: false },
+            ],
+          },
+          {
+            id: 6,
+            name: 'Exercícios',
+            expanded: false,
+            titleOptions: 'TITULO EXEMPLO',
+            checkList: [
+              { id: 201, name: 'Exercício 1', checked: false },
+              { id: 202, name: 'Exercício 2', checked: false },
+            ],
+          },
+          {
+            id: 7,
+            name: 'Materiais',
+            expanded: false,
+            titleOptions: 'TITULO EXEMPLO 1',
+            checkList: [
+              { id: 301, name: 'Material PDF', checked: false },
+              { id: 302, name: 'Slides', checked: false },
+            ],
+          },
+        ],
       },
     ],
   },
 ])
-
-const toggleItem = (item) => {
-  item.expanded = !item.expanded
-}
 </script>
 <style lang="scss">
 .card {
